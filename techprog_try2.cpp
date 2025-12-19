@@ -6,9 +6,11 @@
 #include <stdexcept>
 #include <windows.h>
 #include <limits> 
+#include "Group.h"
+
 using namespace std;
 
-// ----------- КЛАСС STUDENT -----------------
+/*
 
 class Student {
     char* name;
@@ -45,13 +47,12 @@ public:
     }
 
     void clear() {
-        // очистка имени
+
         if (name) {
             delete[] name;
             name = nullptr;
         }
 
-        // очистка оценок
         if (scores) {
             delete[] scores;
             scores = nullptr;
@@ -93,7 +94,7 @@ public:
     const char* getName() const { return name; }
     int getScore(int index) const {
         if (index < 0 || index >= scoreCount) {
-            return 0; // или выброс исключения, если разрешено
+            return 0; 
         }
         return scores[index];
     }
@@ -151,8 +152,6 @@ public:
     }
 };
 
-
-// --------------- КЛАСС GROUP --------------------
 
 class Group {
     Student* students;
@@ -230,13 +229,9 @@ public:
 
     void addStudent(const Student& newStudent) {
         Student* temp = new Student[count + 1];
-
-        // копируем старых
         for (int i = 0; i < count; ++i) {
-            temp[i] = students[i];   // ⚠️ нужен корректный operator=
+            temp[i] = students[i];  
         }
-
-        // добавляем нового
         temp[count] = newStudent;
 
         delete[] students;
@@ -248,8 +243,6 @@ public:
         if (index < 0 || index >= count) {
             return;
         }
-
-        // очищаем удаляемого
         students[index].clear();
 
         Student* temp = nullptr;
@@ -302,7 +295,7 @@ public:
         }
         cout << "Средний балл группы: " << getAverageScore() << endl;
     }
-};
+};*/
 
 
 void sortGroups(Group** groups, int left, int right){
@@ -330,9 +323,6 @@ void sortGroups(Group** groups, int left, int right){
         if (i < right) sortGroups(groups, i, right);
     }
 }
-
-
-
 
 void menu() {
     Group** groups = nullptr;
@@ -445,7 +435,6 @@ void menu() {
 
         case 5:
         {
-            // === ЧТЕНИЕ ФАЙЛА В ДИНАМИЧЕСКИЙ БУФЕР ===
             ifstream fin("data.txt", ios::binary);
             if (!fin) {
                 cout << "Не удалось открыть файл\n";
@@ -460,8 +449,6 @@ void menu() {
             fin.read(buffer, size);
             buffer[size] = '\0';
             fin.close();
-
-            // === ПОТОК ДЛЯ СЛОВ ===
             stringstream ss(buffer);
 
             const int WORD_SIZE = 256;
@@ -469,8 +456,6 @@ void menu() {
             char* w2 = new char[WORD_SIZE];
 
             bool hasFirst = false;
-
-            // === ОБРАБОТКА СЛОВ ПО ПАРАМ ===
             while (true) {
                 if (!hasFirst) {
                     if (!(ss >> w1)) break;
@@ -478,7 +463,7 @@ void menu() {
                 }
 
                 if (!(ss >> w2)) {
-                    cout << w1; // нечётное слово — выводим как есть
+                    cout << w1;
                     break;
                 }
 
@@ -490,8 +475,6 @@ void menu() {
             }
 
             cout << endl;
-
-            // === ОЧИСТКА ПАМЯТИ ===
             delete[] buffer;
             delete[] w1;
             delete[] w2;
@@ -502,19 +485,6 @@ void menu() {
 
         case 6:
         {
-           /* cout << "Введите номер группы (1.." << groupCount << "): ";
-            int num; cin >> num;
-            cin.ignore();
-            int idx = -1;
-            for (int i = 0; i < groupCount; i++) {
-                if (groups[i]->getNumber() == num) idx = i;
-            }
-            if (idx == -1) {
-                cout << "index error" << endl;
-                break;
-            }*/
-
-
             cout << "Введите индекс группы (1.." << groupCount << "): ";
             int idx; cin >> idx;
             if (idx < 1 || idx > groupCount) {
@@ -617,8 +587,6 @@ void menu() {
             int scoreCount;
             cout << "Введите количество оценок студента: ";
             cin >> scoreCount;
-            /*cout << "Введите оценки студента : ";
-            for (int i = 0; i < scoreCount; i++) cin >> marks[i];*/
             Student s(newname, scoreCount);
             g->addStudent(s);
             cout << "Студент добавлен\n";
@@ -639,18 +607,15 @@ void menu() {
     delete[] groups;
 }
 
-
-// ---------------- MAIN ------------------
-
 int main() {
     setlocale(LC_ALL, "Russian");
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
+
     try {
         menu();
     }
-    catch (exception& e) {
-        cout << "Ошибка: " << e.what() << endl;
+    catch (std::exception& e) {
+        std::cout << "Ошибка: " << e.what() << std::endl;
     }
-   
-} 
+}
